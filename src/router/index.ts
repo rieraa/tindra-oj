@@ -9,17 +9,17 @@ const router = createRouter({
 });
 // 鉴权逻辑
 
-// 添加导航守卫
+// 根据当前用户的登录状态导航
 router.beforeEach((to, from, next) => {
-  // 注册router总比pinia先 todo
+  // router总比pinia先注册 todo
   const userStore = useUserStore();
-  // 如果路由需要鉴权
-  if (to.meta.requiresAuth) {
-    // 查看当前用户权限
-    if (userStore.userInfo.isAuthenticated) {
+  // 如果路由需要登录
+  if (to.meta.requireLogin) {
+    // 查看当前是否登录
+    if (userStore.userInfo.loginStatus) {
       next();
     } else {
-      console.log("🚀 ~ file:index method: line:17 -----无权限:");
+      console.log("🚀 ~ file:index method: line:17 -----未登录:");
       next("/");
     }
   } else {

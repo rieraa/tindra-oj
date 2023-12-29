@@ -8,19 +8,22 @@ export const useUserStore = defineStore("user", {
       userInfo: {
         avatar:
           "https://oooooo.oss-cn-fuzhou.aliyuncs.com/readme/202312232252586.jpg",
-        name: "未登录",
-        isAuthenticated: false,
+        name: "user",
+        isAdmin: false,
+        loginStatus: false,
       },
     };
   },
   getters: {},
   actions: {
+    // 模拟登陆操作
     getUserLoginInfo() {
       this.userInfo = {
-        isAuthenticated: true,
+        loginStatus: true,
+        isAdmin: true,
         avatar:
           "https://oooooo.oss-cn-fuzhou.aliyuncs.com/readme/202312280036348.jpg",
-        name: "test",
+        name: "用户登录",
       };
     },
   },

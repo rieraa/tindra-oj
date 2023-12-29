@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { routes } from "@/router/routes";
 import { useRoute, useRouter } from "vue-router";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useUserStore } from "@/store/userStore";
 
 // 用户登录信息全局管理
@@ -10,6 +10,14 @@ const userStore = useUserStore();
 const router = useRouter();
 // 返回当前路由
 const route = useRoute();
+// 普通用户可见菜单
+const routeToUser = computed(() => {
+  return routes.filter((item) => {
+    // 没有设置 requireAuth 属性的菜单或者当前用户是管理员，则显示该菜单
+    return !item.meta?.requireAuth || userStore.userInfo.isAdmin;
+  });
+});
+
 // 被选中的菜单路由
 const selectedKeys = ref(["/"]);
 
@@ -26,7 +34,7 @@ watch(
 );
 
 /**
- * @description 导航栏点击事件的回调
+ * @description 处理菜单栏点击事件
  * @param key
  */
 const handleMenuItemClick = (key: string) => {
@@ -38,12 +46,7 @@ const handleMenuItemClick = (key: string) => {
 
 <template>
   <!--全局导航栏组件-->
-  <a-row
-    id="navigationBar"
-    class="grid-navigation"
-    style="margin-bottom: 16px"
-    align="center"
-  >
+  <a-row id="navigationBar" class="grid-navigation" align="center">
     <a-col flex="auto">
       <a-menu
         mode="horizontal"
@@ -59,7 +62,7 @@ const handleMenuItemClick = (key: string) => {
             <img class="img" src="../assets/logo.jpg" alt="logo" />
           </div>
         </a-menu-item>
-        <a-menu-item v-for="item in routes" :key="item.path">
+        <a-menu-item v-for="item in routeToUser" :key="item.path">
           {{ item.name }}
         </a-menu-item>
       </a-menu>
