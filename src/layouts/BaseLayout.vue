@@ -4,7 +4,7 @@ import NavigationBar from "@/components/NavigationBar.vue";
 
 <template>
   <div id="basicLayout">
-    <a-layout style="height: 400px">
+    <a-layout style="min-height: 100vh">
       <!--导航栏-->
       <a-layout-header class="header">
         <!--导航组件-->
@@ -34,7 +34,7 @@ import NavigationBar from "@/components/NavigationBar.vue";
   .footer {
     background-color: chartreuse;
     padding: 16px;
-    position: absolute;
+    position: sticky;
     bottom: 0;
     left: 0;
     right: 0;
