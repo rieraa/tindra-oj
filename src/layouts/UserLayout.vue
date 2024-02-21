@@ -1,15 +1,10 @@
-<script setup lang="ts">
-import NavigationBar from "@/components/NavigationBar.vue";
-</script>
-<!--全局默认布局-->
+<script setup lang="ts"></script>
+
 <template>
   <div id="basicLayout">
     <a-layout style="min-height: 100vh">
       <!--导航栏-->
-      <a-layout-header class="header">
-        <!--导航组件-->
-        <NavigationBar />
-      </a-layout-header>
+      <a-layout-header class="header"></a-layout-header>
       <!--内容-->
       <a-layout-content class="content">
         <router-view></router-view>

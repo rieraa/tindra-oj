@@ -1,10 +1,10 @@
 <template>
   <div id="app">
-    <BaseLayout />
+    <!--使用路由配置设置的模板-->
+    <router-view />
   </div>
 </template>
 
 <style></style>
-<script setup lang="ts">
-import BaseLayout from "@/layouts/BaseLayout.vue";
-</script>
+
+<script setup lang="ts"></script>
