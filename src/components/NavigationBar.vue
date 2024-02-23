@@ -14,16 +14,15 @@ const route = useRoute();
 const routeToUser = computed(() => {
   return routes.filter((item) => {
     // 没有设置 requireAuth 属性的菜单或者当前用户是管理员，则显示该菜单
-    return !item.meta?.requireAuth || userStore.userInfo.isAdmin;
+    return (
+      (!item.meta?.requireAuth && !item.meta?.hide) ||
+      userStore.userInfo.isAdmin
+    );
   });
 });
 
 // 被选中的菜单路由
 const selectedKeys = ref(["/"]);
-
-setTimeout(() => {
-  userStore.getUserLoginInfo();
-}, 3000);
 
 // 监听路由变化 修改菜单栏样式
 watch(
@@ -43,9 +42,8 @@ const handleMenuItemClick = (key: string) => {
   });
 };
 </script>
-
+<!--全局导航栏组件-->
 <template>
-  <!--全局导航栏组件-->
   <a-row id="navigationBar" class="grid-navigation" align="center">
     <a-col flex="auto">
       <a-menu
@@ -62,6 +60,7 @@ const handleMenuItemClick = (key: string) => {
             <img class="img" src="../assets/logo.jpg" alt="logo" />
           </div>
         </a-menu-item>
+        <!--todo 过滤掉/user下的路由-->
         <a-menu-item v-for="item in routeToUser" :key="item.path">
           {{ item.name }}
         </a-menu-item>
