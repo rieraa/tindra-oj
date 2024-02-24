@@ -23,6 +23,8 @@ import NavigationBar from "@/components/NavigationBar.vue";
 <style lang="scss" scoped>
 #basicLayout {
   .header {
+    margin-bottom: 5px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
   }
 
   .content {
