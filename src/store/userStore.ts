@@ -23,7 +23,7 @@ export const useUserStore = defineStore("user", {
         this.userInfo = {
           ...result.data,
           loginStatus: true,
-          isAdmin: result.data === "admin",
+          isAdmin: result.data?.userRole === "admin",
         };
       }
     },

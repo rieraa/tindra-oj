@@ -1,39 +1,21 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div id="basicLayout">
-    <a-layout style="min-height: 100vh">
-      <!--导航栏-->
-      <a-layout-header class="header"></a-layout-header>
-      <!--内容-->
-      <a-layout-content class="content">
-        <router-view></router-view>
-      </a-layout-content>
-      <!--底部信息-->
-      <a-layout-footer class="footer">aneto-oj</a-layout-footer>
-    </a-layout>
+  <div id="userLayout">
+    <router-view></router-view>
   </div>
 </template>
 
 <style lang="scss" scoped>
-#basicLayout {
-  .header {
-  }
+#userLayout {
+  background: #00c1c1
+    url(https://img.bosszhipin.com/static/file/2022/zlqc2m9fao1667185843533.png)
+    bottom/100% auto no-repeat;
 
-  .content {
-    padding: 20px;
-    background-color: bisque;
-    margin-bottom: 16px;
-  }
-
-  .footer {
-    background-color: chartreuse;
-    padding: 16px;
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    text-align: center;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
 }
 </style>

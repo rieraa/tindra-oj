@@ -20,11 +20,6 @@ export const routes: Array<RouteRecordRaw> = [
         name: "login",
         component: LoginView,
       },
-      {
-        path: "/user/register",
-        name: "register",
-        component: RegisterView,
-      },
     ],
   },
   {
@@ -50,5 +45,13 @@ export const routes: Array<RouteRecordRaw> = [
           import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
       },
     ],
+  },
+  {
+    path: "/auth",
+    name: "auth",
+    component: BaseLayout,
+    meta: {
+      requireLogin: true,
+    },
   },
 ];
