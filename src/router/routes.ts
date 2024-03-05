@@ -1,9 +1,8 @@
 import { RouteRecordRaw } from "vue-router";
 import BaseLayout from "@/layouts/BaseLayout.vue";
-import HomeView from "@/views/HomeView.vue";
+import TemplateView from "@/views/TemplateView.vue";
 import UserLayout from "@/layouts/UserLayout.vue";
 import LoginView from "@/views/user/LoginView.vue";
-import RegisterView from "@/views/user/RegisterView.vue";
 
 // 路由信息（菜单）
 export const routes: Array<RouteRecordRaw> = [
@@ -29,7 +28,7 @@ export const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: "",
-        component: HomeView,
+        component: TemplateView,
       },
       {
         path: "/about",
@@ -53,5 +52,10 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       requireLogin: true,
     },
+  },
+  {
+    path: "/template",
+    name: "template",
+    component: TemplateView,
   },
 ];
