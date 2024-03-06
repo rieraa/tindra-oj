@@ -12,7 +12,7 @@ const router = useRouter();
 const route = useRoute();
 // 普通用户可见菜单
 const routeToUser = computed(() => {
-  return routes.filter((item) => {
+  return routes[1].children?.filter((item) => {
     // 没有设置 requireAuth 属性的菜单或者当前用户是管理员，则显示该菜单
     return (
       (!item.meta?.requireAuth || userStore.userInfo.isAdmin) &&
