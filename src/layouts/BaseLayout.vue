@@ -29,12 +29,10 @@ import NavigationBar from "@/components/NavigationBar.vue";
 
   .content {
     padding: 20px;
-    background-color: bisque;
     margin-bottom: 16px;
   }
 
   .footer {
-    background-color: chartreuse;
     padding: 16px;
     position: sticky;
     bottom: 0;

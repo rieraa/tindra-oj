@@ -8,6 +8,7 @@ import { defineProps, withDefaults } from "vue";
 interface Props {
   value: string;
   handleChange: (v: string) => void;
+  mode?: string;
 }
 
 // 使用到的插件
@@ -22,11 +23,20 @@ withDefaults(defineProps<Props>(), {
       v
     );
   },
+
+  mode: () => "split",
 });
 </script>
 
 <template>
-  <Editor :value="value" :plugins="plugins" @change="handleChange" />
+  <div id="markdownEditor">
+    <Editor
+      :value="value"
+      :plugins="plugins"
+      :mode="mode"
+      @change="handleChange"
+    />
+  </div>
 </template>
 
 <style lang="scss"></style>

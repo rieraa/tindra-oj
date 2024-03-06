@@ -3,6 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.vue";
 import TemplateView from "@/views/TemplateView.vue";
 import UserLayout from "@/layouts/UserLayout.vue";
 import LoginView from "@/views/user/LoginView.vue";
+import QuestionCreatView from "@/views/question/QuestionCreatView.vue";
 
 // 路由信息（菜单）
 export const routes: Array<RouteRecordRaw> = [
@@ -27,35 +28,18 @@ export const routes: Array<RouteRecordRaw> = [
     component: BaseLayout,
     children: [
       {
-        path: "",
+        path: "/template",
+        name: "测试组件页面",
         component: TemplateView,
       },
       {
-        path: "/about",
-        name: "about",
+        path: "/question",
+        name: "新增题目",
+        component: QuestionCreatView,
         meta: {
-          requireAuth: true,
           requireLogin: true,
         },
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () =>
-          import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
       },
     ],
-  },
-  {
-    path: "/auth",
-    name: "auth",
-    component: BaseLayout,
-    meta: {
-      requireLogin: true,
-    },
-  },
-  {
-    path: "/template",
-    name: "template",
-    component: TemplateView,
   },
 ];
