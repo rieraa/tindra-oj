@@ -4,6 +4,7 @@ import TemplateView from "@/views/TemplateView.vue";
 import UserLayout from "@/layouts/UserLayout.vue";
 import LoginView from "@/views/user/LoginView.vue";
 import QuestionCreatView from "@/views/question/QuestionCreatView.vue";
+import QuestionManageView from "@/views/question/QuestionManageView.vue";
 
 // 路由信息（菜单）
 export const routes: Array<RouteRecordRaw> = [
@@ -33,11 +34,31 @@ export const routes: Array<RouteRecordRaw> = [
         component: TemplateView,
       },
       {
-        path: "/question",
+        path: "/question/add",
         name: "新增题目",
         component: QuestionCreatView,
         meta: {
           requireLogin: true,
+          requireAuth: true,
+        },
+      },
+      {
+        path: "/question/update",
+        name: "更新题目",
+        component: QuestionCreatView,
+        meta: {
+          requireLogin: true,
+          requireAuth: true,
+          hide: true,
+        },
+      },
+      {
+        path: "/question/manage",
+        name: "题目列表",
+        component: QuestionManageView,
+        meta: {
+          requireLogin: true,
+          requireAuth: true,
         },
       },
     ],

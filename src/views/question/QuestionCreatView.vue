@@ -1,20 +1,67 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import MarkDownEditor from "@/components/MarkDownEditor.vue";
 import { QuestionControllerService } from "../../../api";
 import message from "@arco-design/web-vue/es/message";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
+// 新增或者更新标志
+const flag = ref("create");
 const form = ref({
-  title: "题目",
-  content: "内容",
-  tags: ["javascript"],
-  answer: "答案",
-  judgeCase: [{ input: "1,2,3", output: "3,2,1" }],
+  title: "",
+  content: "",
+  tags: [],
+  answer: "",
+  judgeCase: [
+    {
+      input: "",
+      output: "",
+    },
+  ],
   judgeConfig: {
     timeLimit: 1000,
     memoryLimit: 128,
   },
 });
+
+/**
+ * 获取题目
+ */
+const handleGetQuestion = async () => {
+  const id = route.query.id;
+  if (!id) return;
+  flag.value = "update";
+  const res = await QuestionControllerService.getQuestionById(id);
+  if (res.code === 0) {
+    Object.assign(form.value, res.data);
+    if (!form.value.judgeCase) {
+      form.value.judgeCase = [
+        {
+          input: "",
+          output: "",
+        },
+      ];
+    } else {
+      form.value.judgeCase = JSON.parse(form.value.judgeCase);
+    }
+    if (!form.value.judgeConfig) {
+      form.value.judgeConfig = {
+        timeLimit: 1000,
+        memoryLimit: 128,
+      };
+    } else {
+      form.value.judgeConfig = JSON.parse(form.value.judgeConfig);
+    }
+    if (!form.value.tags) {
+      form.value.tags = [];
+    } else {
+      form.value.tags = JSON.parse(form.value.tags);
+    }
+  } else {
+    message.error("获取题目失败" + res.message);
+  }
+};
 
 /**
  * 测试用例的删除
@@ -46,17 +93,32 @@ const answerOnChange = (v: string) => {
  */
 const doSubmit = async () => {
   console.log("form", form.value);
-  const res = await QuestionControllerService.addQuestion(form.value);
-  if (res.code === 0) {
-    message.success("新增成功");
+  if (flag.value === "update") {
+    const res = await QuestionControllerService.updateQuestion(form.value);
+    if (res.code === 0) {
+      message.success("更新成功");
+    } else {
+      message.error("更新失败" + res.message);
+    }
+    return;
   } else {
-    message.error("新增失败" + res.message);
+    const res = await QuestionControllerService.addQuestion(form.value);
+    if (res.code === 0) {
+      message.success("新增成功");
+    } else {
+      message.error("新增失败" + res.message);
+    }
   }
 };
+
+onMounted(() => {
+  handleGetQuestion();
+});
 </script>
 
 <template>
   <div id="questionCreatView">
+    <h2>新增题目</h2>
     <a-form style="width: 70%" :model="form" label-align="left">
       <!--题目-->
       <a-form-item field="title" label="题目">
@@ -151,11 +213,10 @@ const doSubmit = async () => {
         </a-form-item>
         <a-button status="success" @click="handleAdd">新增用例</a-button>
       </a-form-item>
-
-      <a-button style="max-width: 400px" type="primary" @click="doSubmit"
-        >提交
-      </a-button>
     </a-form>
+    <a-button style="min-width: 400px" type="primary" @click="doSubmit"
+      >{{ flag === "create" ? "新增" : "更新" }}题目
+    </a-button>
   </div>
 </template>
 
