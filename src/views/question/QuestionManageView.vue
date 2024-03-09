@@ -3,6 +3,7 @@ import { onMounted, ref, watchEffect } from "vue";
 import { Question, QuestionControllerService } from "../../../api";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
+import moment from "moment";
 // 返回路由实例
 const router = useRouter();
 // 题目列表
@@ -15,6 +16,61 @@ const pageInfo = ref({
 // 总数
 const total = ref(0);
 
+const columns = [
+  {
+    title: "id",
+    dataIndex: "id",
+  },
+  {
+    title: "标题",
+    dataIndex: "title",
+  },
+  // {
+  //   title: "内容",
+  //   dataIndex: "content",
+  // },
+  {
+    title: "标签",
+    slotName: "tags",
+  },
+  // {
+  //   title: "答案",
+  //   dataIndex: "answer",
+  // },
+  // {
+  //   title: "提交数",
+  //   dataIndex: "submitNum",
+  // },
+  // {
+  //   title: "通过数",
+  //   dataIndex: "acceptedNum",
+  // },
+  // {
+  //   title: "测试用例",
+  //   dataIndex: "judgeCase",
+  // },
+  // {
+  //   title: "题目配置",
+  //   dataIndex: "judgeConfig",
+  // },
+  {
+    title: "创建者id",
+    dataIndex: "creatorId",
+  },
+  {
+    title: "创建时间",
+    dataIndex: "createTime",
+  },
+  {
+    title: "更新时间",
+    dataIndex: "updateTime",
+  },
+  {
+    title: "操作",
+    slotName: "optional",
+  },
+];
+
 /**
  * 获取题目列表
  */
@@ -24,6 +80,14 @@ const handleGetQuestionList = async () => {
   );
   if (res.code === 0) {
     questionList.value = res.data?.records;
+    questionList.value.forEach((item: Question) => {
+      if (item.createTime) {
+        item.createTime = moment(item.createTime).format("YYYY-MM-DD");
+      }
+      if (item.updateTime) {
+        item.updateTime = moment(item.updateTime).format("YYYY-MM-DD");
+      }
+    });
     // if (!questionList.value.judgeCase) {
     //   questionList.value.judgeCase = [
     //     {
@@ -97,22 +161,6 @@ const handlePageChange = (page: number) => {
 };
 
 /**
- * 格式化日期
- * @param dateString
- */
-function formatDateString(dateString: string) {
-  const date = new Date(dateString);
-
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const day = date.getDate().toString().padStart(2, "0");
-  const hours = date.getHours().toString().padStart(2, "0");
-  const minutes = date.getMinutes().toString().padStart(2, "0");
-  const seconds = date.getSeconds().toString().padStart(2, "0");
-
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-}
-/**
  * 监听分页信息变化 变化时重新进行请求
  */
 watchEffect(() => {
@@ -123,60 +171,6 @@ onMounted(() => {
   handleGetQuestionList();
 });
 //
-const columns = [
-  {
-    title: "id",
-    dataIndex: "id",
-  },
-  {
-    title: "标题",
-    dataIndex: "title",
-  },
-  // {
-  //   title: "内容",
-  //   dataIndex: "content",
-  // },
-  {
-    title: "标签",
-    slotName: "tags",
-  },
-  // {
-  //   title: "答案",
-  //   dataIndex: "answer",
-  // },
-  // {
-  //   title: "提交数",
-  //   dataIndex: "submitNum",
-  // },
-  // {
-  //   title: "通过数",
-  //   dataIndex: "acceptedNum",
-  // },
-  // {
-  //   title: "测试用例",
-  //   dataIndex: "judgeCase",
-  // },
-  // {
-  //   title: "题目配置",
-  //   dataIndex: "judgeConfig",
-  // },
-  {
-    title: "创建者id",
-    dataIndex: "creatorId",
-  },
-  {
-    title: "创建时间",
-    dataIndex: "createTime",
-  },
-  {
-    title: "更新时间",
-    dataIndex: "updateTime",
-  },
-  {
-    title: "操作",
-    slotName: "optional",
-  },
-];
 </script>
 
 <template>
@@ -203,7 +197,7 @@ const columns = [
         </div>
       </template>
       <template #tags="{ record }">
-        <a-space>
+        <a-space wrap>
           <a-tag v-for="tag in record.tags" :key="tag">
             {{ tag }}
           </a-tag>
