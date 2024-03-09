@@ -5,6 +5,7 @@ import UserLayout from "@/layouts/UserLayout.vue";
 import LoginView from "@/views/user/LoginView.vue";
 import QuestionCreatView from "@/views/question/QuestionCreatView.vue";
 import QuestionManageView from "@/views/question/QuestionManageView.vue";
+import QuestionListView from "@/views/question/QuestionListView.vue";
 
 // 路由信息（菜单）
 export const routes: Array<RouteRecordRaw> = [
@@ -28,6 +29,14 @@ export const routes: Array<RouteRecordRaw> = [
     name: "home",
     component: BaseLayout,
     children: [
+      {
+        path: "/question/list",
+        name: "题目列表",
+        component: QuestionListView,
+        meta: {
+          requireLogin: true,
+        },
+      },
       {
         path: "/template",
         name: "测试组件页面",
@@ -54,7 +63,7 @@ export const routes: Array<RouteRecordRaw> = [
       },
       {
         path: "/question/manage",
-        name: "题目列表",
+        name: "题目管理",
         component: QuestionManageView,
         meta: {
           requireLogin: true,
