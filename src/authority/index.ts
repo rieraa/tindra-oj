@@ -14,10 +14,10 @@ router.beforeEach(async (to, from, next) => {
     await userStore.getUserLoginInfo();
   }
 
-  console.log(
-    "🚀 ~ file:index method: line:18 -----userStore.userInfo.loginStatus:",
-    userStore.userInfo.loginStatus
-  );
+  console.log("🚀 ~ file:index method: line:21 -----to:", to);
+  if (to.path === "/") {
+    next("/question/list");
+  }
   // 如果路由需要登录
   if (to.meta.requireLogin) {
     if (userStore.userInfo.loginStatus) {
