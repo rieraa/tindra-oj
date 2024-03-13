@@ -77,7 +77,7 @@ const handlePageChange = (page: number) => {
 const handleCellClick = (record: Question) => {
   console.log("record", record);
   router.push({
-    path: "/question/do",
+    path: "/question/detail",
     query: {
       id: record.id,
     },
