@@ -85,8 +85,8 @@ const handleMenuItemClick = (key: string) => {
       align-items: center;
 
       .img {
-        width: 50px;
-        height: 50px;
+        width: 35px;
+        height: 35px;
       }
     }
   }
