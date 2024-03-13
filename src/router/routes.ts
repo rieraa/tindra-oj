@@ -6,6 +6,7 @@ import LoginView from "@/views/user/LoginView.vue";
 import QuestionCreatView from "@/views/question/QuestionCreatView.vue";
 import QuestionManageView from "@/views/question/QuestionManageView.vue";
 import QuestionListView from "@/views/question/QuestionListView.vue";
+import QuestionDetailView from "@/views/question/QuestionDetailView.vue";
 
 // 路由信息（菜单）
 export const routes: Array<RouteRecordRaw> = [
@@ -35,6 +36,15 @@ export const routes: Array<RouteRecordRaw> = [
         component: QuestionListView,
         meta: {
           requireLogin: true,
+        },
+      },
+      {
+        path: "/question/detail",
+        name: "做题页面",
+        component: QuestionDetailView,
+        meta: {
+          requireLogin: true,
+          hide: true,
         },
       },
       {
