@@ -118,112 +118,115 @@ onMounted(() => {
 
 <template>
   <div id="questionCreatView">
-    <h2>新增题目</h2>
-    <a-form style="width: 70%" :model="form" label-align="left">
-      <!--题目-->
-      <a-form-item field="title" label="题目">
-        <a-input
-          v-model="form.title"
-          placeholder="请输入题目"
-          style="width: 670px"
-        />
-      </a-form-item>
-      <!--题目内容-->
-      <a-form-item field="content" label="题目内容">
-        <MarkDownEditor
-          :value="form.content"
-          :handle-change="contentOnChange"
-        />
-      </a-form-item>
-      <!--题目标签-->
-      <a-form-item field="content" label="标签">
-        <a-input-tag
-          v-model="form.tags"
-          :default-value="['test']"
-          style="width: 670px"
-          placeholder="回车添加"
-          allow-clear
-        />
-      </a-form-item>
-      <!--示例答案-->
-      <a-form-item field="answer" label="题目答案">
-        <MarkDownEditor :value="form.answer" :handle-change="answerOnChange" />
-      </a-form-item>
-      <!--运行限制-->
-      <a-form-item
-        style="width: 670px"
-        label="题目配置"
-        :content-flex="false"
-        :merge-props="false"
-      >
-        <a-space direction="vertical" style="min-width: 670px">
-          <a-form-item field="form.judgeConfig.timeLimit" label="时间限制">
-            <a-input-number
-              v-model="form.judgeConfig.timeLimit"
-              mode="button"
-              placeholder="ms"
-            />
-          </a-form-item>
-          <a-form-item field="form.judgeConfig.memoryLimit" label="内存限制">
-            <a-input-number
-              v-model="form.judgeConfig.memoryLimit"
-              mode="button"
-              placeholder="kb"
-            />
-          </a-form-item>
-        </a-space>
-      </a-form-item>
-      <!--用例-->
-      <a-form-item
-        style="width: 670px"
-        label="题目用例"
-        :content-flex="false"
-        :merge-props="false"
-      >
-        <a-form-item
-          v-for="(element, index) of form.judgeCase"
-          :key="index"
-          no-style
-        >
-          <div style="display: flex">
-            <a-space direction="vertical" style="min-width: 750px">
-              <!--输入用例-->
-              <a-form-item
-                :field="`element[${index}].input`"
-                :label="`输入用例-${index}`"
-                :key="index"
-              >
-                <a-input v-model="element.input" placeholder="输入用例" />
-              </a-form-item>
-              <a-form-item
-                :field="`element[${index}].output`"
-                :label="`输出用例-${index}`"
-                :key="index"
-              >
-                <a-input v-model="element.output" placeholder="输出用例." />
-              </a-form-item>
-            </a-space>
-            <a-button
-              status="danger"
-              style="margin-left: 100px"
-              @click="handleDelete(index)"
-              >删除用例
-            </a-button>
-          </div>
+    <a-card title="新增题目">
+      <a-form :model="form" label-align="left">
+        <!--题目-->
+        <a-form-item field="title" label="题目">
+          <a-input
+            v-model="form.title"
+            placeholder="请输入题目"
+            style="width: 670px"
+          />
         </a-form-item>
-        <a-button status="success" @click="handleAdd">新增用例</a-button>
-      </a-form-item>
-    </a-form>
-    <a-button style="min-width: 400px" type="primary" @click="doSubmit"
-      >{{ flag === "create" ? "新增" : "更新" }}题目
-    </a-button>
+        <!--题目介绍-->
+        <a-form-item field="content" label="题目介绍">
+          <MarkDownEditor
+            :value="form.content"
+            :handle-change="contentOnChange"
+          />
+        </a-form-item>
+        <!--题目标签-->
+        <a-form-item field="content" label="标签">
+          <a-input-tag
+            v-model="form.tags"
+            :default-value="['test']"
+            style="width: 670px"
+            placeholder="回车添加"
+            allow-clear
+          />
+        </a-form-item>
+        <!--示例答案-->
+        <a-form-item field="answer" label="题目答案">
+          <MarkDownEditor
+            :value="form.answer"
+            :handle-change="answerOnChange"
+          />
+        </a-form-item>
+        <!--运行限制-->
+        <a-form-item
+          style="width: 670px"
+          label="题目配置"
+          :content-flex="false"
+          :merge-props="false"
+        >
+          <a-space direction="vertical" style="min-width: 670px">
+            <a-form-item field="form.judgeConfig.timeLimit" label="时间限制">
+              <a-input-number
+                v-model="form.judgeConfig.timeLimit"
+                mode="button"
+                placeholder="ms"
+              />
+            </a-form-item>
+            <a-form-item field="form.judgeConfig.memoryLimit" label="内存限制">
+              <a-input-number
+                v-model="form.judgeConfig.memoryLimit"
+                mode="button"
+                placeholder="kb"
+              />
+            </a-form-item>
+          </a-space>
+        </a-form-item>
+        <!--用例-->
+        <a-form-item
+          style="width: 670px"
+          label="题目用例"
+          :content-flex="false"
+          :merge-props="false"
+        >
+          <a-form-item
+            v-for="(element, index) of form.judgeCase"
+            :key="index"
+            no-style
+          >
+            <div style="display: flex">
+              <a-space direction="vertical" style="min-width: 750px">
+                <!--输入用例-->
+                <a-form-item
+                  :field="`element[${index}].input`"
+                  :label="`输入用例-${index}`"
+                  :key="index"
+                >
+                  <a-input v-model="element.input" placeholder="输入用例" />
+                </a-form-item>
+                <a-form-item
+                  :field="`element[${index}].output`"
+                  :label="`输出用例-${index}`"
+                  :key="index"
+                >
+                  <a-input v-model="element.output" placeholder="输出用例." />
+                </a-form-item>
+              </a-space>
+              <a-button
+                status="danger"
+                style="margin-left: 40px"
+                @click="handleDelete(index)"
+                >删除用例
+              </a-button>
+            </div>
+          </a-form-item>
+          <a-button status="success" @click="handleAdd">新增用例</a-button>
+        </a-form-item>
+      </a-form>
+      <a-button style="min-width: 400px" type="primary" @click="doSubmit"
+        >{{ flag === "create" ? "新增" : "更新" }}题目
+      </a-button></a-card
+    >
   </div>
 </template>
 
 <style lang="scss">
 #questionCreatView {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 1080px;
+  margin: 0 auto;
 }
 </style>

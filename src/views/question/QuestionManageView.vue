@@ -26,7 +26,7 @@ const columns = [
     dataIndex: "title",
   },
   // {
-  //   title: "内容",
+  //   title: "描述",
   //   dataIndex: "content",
   // },
   {
