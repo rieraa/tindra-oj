@@ -3,7 +3,6 @@ import { useRoute } from "vue-router";
 import { onBeforeMount, ref } from "vue";
 import {
   QuestionControllerService,
-  QuestionSubmitControllerService,
   type QuestionSubmitRequest,
   QuestionVO,
 } from "../../../api";
@@ -45,7 +44,7 @@ const handleCodeChange = (v: string) => {
  * 用户提交代码
  */
 const handleRunCode = async () => {
-  const res = await QuestionSubmitControllerService.questionSubmit({
+  const res = await QuestionControllerService.questionSubmit({
     ...codeForm.value,
     questionId: route.query.id,
   });
