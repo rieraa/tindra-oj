@@ -27,28 +27,12 @@ const codeEditor = ref();
 watch(
   () => props.language,
   () => {
-    console.log(
-      "🚀 ~ file:CodeEditor method:watch ~ props.language",
-      props.language
-    );
-    const oldModel = toRaw(codeEditor.value).getModel(); //获取旧模型
-    const value = toRaw(codeEditor.value).getValue(); //获取旧的文本
-    //创建新模型，value为旧文本，id为modeId，即语言（language.id）
-    //modesIds即为支持语言
-    var modesIds = monaco.languages.getLanguages().map(function (lang) {
-      return lang.id;
-    });
-    console.log(
-      "🚀 ~ file:CodeEditor method: line:41 -----modesIds:",
-      modesIds
-    );
-    const newModel = monaco.editor.createModel(value, props.language);
-    //将旧模型销毁
-    if (oldModel) {
-      oldModel.dispose();
+    if (codeEditor.value) {
+      monaco.editor.setModelLanguage(
+        toRaw(codeEditor.value).getModel(),
+        props.language
+      );
     }
-    //设置新模型
-    toRaw(codeEditor.value).setModel(newModel);
   }
 );
 
