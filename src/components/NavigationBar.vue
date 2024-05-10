@@ -42,6 +42,13 @@ const handleMenuItemClick = (key: string) => {
     path: key,
   });
 };
+
+const handleLogOut = () => {
+  userStore.logOut();
+  router.push({
+    path: "/user/login",
+  });
+};
 </script>
 <!--全局导航栏组件-->
 <template>
@@ -69,9 +76,15 @@ const handleMenuItemClick = (key: string) => {
         </a-menu>
       </a-col>
       <a-col flex="100px">
-        <a-avatar :image-url="userStore?.userInfo?.userAvatar ?? ''"
-          >A</a-avatar
-        >
+        <a-popover>
+          <a-avatar :image-url="userStore?.userInfo?.userAvatar ?? ''"
+            >Avatar</a-avatar
+          >
+          <template #content>
+            <a-link @click="handleLogOut">退出登录</a-link>
+            <!--<a-button>注销</a-button>-->
+          </template>
+        </a-popover>
       </a-col>
     </a-row>
   </div>

@@ -15,7 +15,7 @@ import NavigationBar from "@/components/NavigationBar.vue";
         <router-view></router-view>
       </a-layout-content>
       <!--底部信息-->
-      <a-layout-footer class="footer">aneto-oj</a-layout-footer>
+      <a-layout-footer class="footer">oj</a-layout-footer>
     </a-layout>
   </div>
 </template>

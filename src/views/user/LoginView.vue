@@ -60,10 +60,11 @@
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { UserControllerService } from "@/api";
+
 import message from "@arco-design/web-vue/es/message";
 import { useUserStore } from "@/store/userStore";
 import { useRouter } from "vue-router";
+import { UserControllerService } from "../../../request/user";
 
 // 路由实例
 const router = useRouter();
@@ -93,7 +94,7 @@ const handleSubmit = async () => {
   const { checkPassword, ...loginForm } = form;
   if (radioValue.value === "login") {
     {
-      const res = await UserControllerService.userLogin(loginForm);
+      const res = await UserControllerService.userLoginUsingPost(loginForm);
       if (res.code === 0) {
         console.log("登录成功" + JSON.stringify(res.data));
         message.success("登录成功");
@@ -113,7 +114,7 @@ const handleSubmit = async () => {
       message.error("两次密码不一致");
       return;
     }
-    const res = await UserControllerService.userRegister(form);
+    const res = await UserControllerService.userRegisterUsingPost(form);
     if (res.code === 0) {
       console.log("注册成功" + JSON.stringify(res.data));
       message.success("注册成功");

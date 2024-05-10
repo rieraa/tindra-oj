@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
-import { Question, QuestionControllerService } from "../../../api";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
+import { Question, QuestionControllerService } from "../../../request/question";
 // 返回路由实例
 const router = useRouter();
 // 题目列表
@@ -10,7 +10,7 @@ const questionList = ref();
 // 信息
 const searchInfo = ref({
   current: 1,
-  pageSize: 10,
+  pageSize: 9,
   title: "",
   tags: [],
 });
@@ -41,8 +41,12 @@ const columns = [
  * 获取题目列表
  */
 const handleGetQuestionList = async () => {
-  const res = await QuestionControllerService.listQuestionVoByPage(
+  const res = await QuestionControllerService.listQuestionVoByPageUsingPost(
     searchInfo.value
+  );
+  console.log(
+    "🚀 ~ file:QuestionListView method:handleGetQuestionList line:47 -----res:",
+    res
   );
   if (res.code === 0) {
     questionList.value = res.data?.records;
@@ -69,6 +73,10 @@ const handlePageChange = (page: number) => {
     ...searchInfo.value,
     current: page,
   };
+  console.log(
+    "🚀 ~ file:QuestionListView method:handlePageChange line:76 -----searchInfo.value :",
+    searchInfo.value
+  );
 };
 
 /**
@@ -104,8 +112,9 @@ function formatDateString(dateString: string) {
  * 监听分页信息变化 变化时重新进行请求
  */
 watch(
-  searchInfo.value,
+  searchInfo,
   (newValue, oldValue) => {
+    console.log("change");
     // 在这里可以执行相应的逻辑
     if (newValue.tags !== oldValue.tags) {
       searchInfo.value.current = 0;

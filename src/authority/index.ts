@@ -4,7 +4,6 @@ import router from "@/router";
 
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore();
-
   // 判断用户是否登录（未登录/登录失败）
   if (
     userStore.userInfo.loginStatus === null ||
@@ -13,6 +12,10 @@ router.beforeEach(async (to, from, next) => {
     // 未登录就获取用户登录信息（如session还未过期就能够成功获得）
     await userStore.getUserLoginInfo();
   }
+  console.log(
+    "🚀 ~ file:index method: line:16 -----userStore.userInfo.loginStatus:",
+    userStore.userInfo.loginStatus
+  );
 
   console.log("🚀 ~ file:index method: line:21 -----to:", to);
   if (to.path === "/") {

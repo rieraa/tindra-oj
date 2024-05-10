@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from "vue";
-import { Question, QuestionControllerService } from "../../../api";
+import { onMounted, ref, watch, watchEffect } from "vue";
+
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import moment from "moment";
+import { Question, QuestionControllerService } from "../../../request/question";
 // 返回路由实例
 const router = useRouter();
 // 题目列表
@@ -11,7 +12,9 @@ const questionList = ref();
 // 分页信息
 const pageInfo = ref({
   current: 1,
-  pageSize: 2,
+  pageSize: 20,
+  tags: [],
+  content: "",
 });
 // 总数
 const total = ref(0);
@@ -53,10 +56,10 @@ const columns = [
   //   title: "题目配置",
   //   dataIndex: "judgeConfig",
   // },
-  {
-    title: "创建者id",
-    dataIndex: "creatorId",
-  },
+  // {
+  //   title: "创建者id",
+  //   dataIndex: "creatorId",
+  // },
   {
     title: "创建时间",
     dataIndex: "createTime",
@@ -75,7 +78,7 @@ const columns = [
  * 获取题目列表
  */
 const handleGetQuestionList = async () => {
-  const res = await QuestionControllerService.listQuestionByPage(
+  const res = await QuestionControllerService.listQuestionByPageUsingPost(
     pageInfo.value
   );
   if (res.code === 0) {
@@ -127,14 +130,16 @@ const handleGetQuestionList = async () => {
  * @param question
  */
 const handleDelete = (question: Question) => {
-  QuestionControllerService.deleteQuestion({ id: question.id }).then((res) => {
-    if (res.code === 0) {
-      message.success("删除成功");
-      handleGetQuestionList();
-    } else {
-      message.error("删除失败" + res.message);
+  QuestionControllerService.deleteQuestionUsingPost({ id: question.id }).then(
+    (res) => {
+      if (res.code === 0) {
+        message.success("删除成功");
+        handleGetQuestionList();
+      } else {
+        message.error("删除失败" + res.message);
+      }
     }
-  });
+  );
 };
 const handleUpdate = (question: Question) => {
   console.log(
@@ -163,9 +168,26 @@ const handlePageChange = (page: number) => {
 /**
  * 监听分页信息变化 变化时重新进行请求
  */
-watchEffect(() => {
-  handleGetQuestionList();
-});
+// watchEffect(() => {
+//   handleGetQuestionList();
+// });
+
+watch(
+  pageInfo,
+  (newValue, oldValue) => {
+    console.log("change");
+    // 在这里可以执行相应的逻辑
+    if (newValue.tags !== oldValue.tags) {
+      pageInfo.value.current = 0;
+    }
+    if (newValue.title !== oldValue.title) {
+      pageInfo.value.current = 0;
+    }
+    // todo 节流
+    handleGetQuestionList();
+  },
+  { deep: true }
+);
 
 onMounted(() => {
   handleGetQuestionList();
@@ -175,7 +197,26 @@ onMounted(() => {
 
 <template>
   <div id="questionListView">
-    <!--todo 无法点击翻页按钮-->
+    <a-form layout="inline">
+      <a-form-item field="name" label="题目名称">
+        <a-input v-model="pageInfo.title" placeholder="输入题目名称" />
+      </a-form-item>
+      <a-form-item field="name" label="题目介绍">
+        <!--<a-select :style="{ width: '320px' }" placeholder="">-->
+        <!--  <a-option>JAVA</a-option>-->
+        <!--  <a-option>C</a-option>-->
+        <!--</a-select>-->
+        <a-input v-model="pageInfo.content" placeholder="输入题目名称" />
+      </a-form-item>
+      <a-form-item field="post" label="题目标签">
+        <a-input-tag
+          style="width: 300px"
+          v-model="pageInfo.tags"
+          placeholder="请输入标签，按回车添加"
+        />
+      </a-form-item>
+    </a-form>
+    <a-divider size="0" />
     <a-table
       :columns="columns"
       :data="questionList"
@@ -193,7 +234,9 @@ onMounted(() => {
       <template #optional="{ record }">
         <div style="display: flex; gap: 2px">
           <a-button @click="() => handleUpdate(record)">编辑</a-button>
-          <a-button @click="() => handleDelete(record)">删除</a-button>
+          <a-popconfirm content="确认要删除吗？">
+            <a-button @click="() => handleDelete(record)">删除</a-button>
+          </a-popconfirm>
         </div>
       </template>
       <template #tags="{ record }">

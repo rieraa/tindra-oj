@@ -18,12 +18,10 @@ const props = withDefaults(defineProps<Props>(), {
     console.log("🚀 ~ file:CodeEditor method:handleChange line:15 -----c:", v);
   },
 });
-
 // 获取到编辑器的dom节点
 const codeEditorDom = ref();
 // 编辑器的实例
 const codeEditor = ref();
-
 watch(
   () => props.language,
   () => {
@@ -38,16 +36,16 @@ watch(
 
 onMounted(() => {
   codeEditor.value = monaco.editor.create(codeEditorDom.value, {
-    theme: "vs-light",
+    theme: "vs-dark", // 主题配置
     language: props.language,
     value: props.value,
     automaticLayout: true,
     lineNumbers: "on",
     minimap: {
-      enabled: false,
+      enabled: true,
     },
-    roundedSelection: false,
-    scrollBeyondLastLine: false,
+    roundedSelection: true,
+    scrollBeyondLastLine: true,
     readOnly: false,
     colorDecorators: true,
 
@@ -60,6 +58,7 @@ onMounted(() => {
   codeEditor.value.onDidChangeModelContent(() => {
     props.handleChange(toRaw(codeEditor.value).getValue());
   });
+  // codeEditor.value.getAction("editor.action.format").run();
   const modesIds = monaco.languages.getLanguages().map(function (lang) {
     return lang.id;
   });

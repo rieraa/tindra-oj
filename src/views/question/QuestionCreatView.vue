@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import MarkDownEditor from "@/components/MarkDownEditor.vue";
-import { QuestionControllerService } from "../../../api";
 import message from "@arco-design/web-vue/es/message";
 import { useRoute } from "vue-router";
+import { QuestionControllerService } from "../../../request/question";
 
 const route = useRoute();
 // 新增或者更新标志
@@ -17,6 +17,7 @@ const form = ref({
     {
       input: "",
       output: "",
+      visible: true,
     },
   ],
   judgeConfig: {
@@ -32,7 +33,7 @@ const handleGetQuestion = async () => {
   const id = route.query.id;
   if (!id) return;
   flag.value = "update";
-  const res = await QuestionControllerService.getQuestionById(id);
+  const res = await QuestionControllerService.getQuestionByIdUsingGet(id);
   if (res.code === 0) {
     Object.assign(form.value, res.data);
     if (!form.value.judgeCase) {
@@ -40,6 +41,7 @@ const handleGetQuestion = async () => {
         {
           input: "",
           output: "",
+          visible: true,
         },
       ];
     } else {
@@ -78,6 +80,7 @@ const handleAdd = () => {
   form.value.judgeCase.push({
     input: "",
     output: "",
+    visible: true,
   });
 };
 
@@ -94,7 +97,9 @@ const answerOnChange = (v: string) => {
 const doSubmit = async () => {
   console.log("form", form.value);
   if (flag.value === "update") {
-    const res = await QuestionControllerService.updateQuestion(form.value);
+    const res = await QuestionControllerService.updateQuestionUsingPost(
+      form.value
+    );
     if (res.code === 0) {
       message.success("更新成功");
     } else {
@@ -102,7 +107,9 @@ const doSubmit = async () => {
     }
     return;
   } else {
-    const res = await QuestionControllerService.addQuestion(form.value);
+    const res = await QuestionControllerService.addQuestionUsingPost(
+      form.value
+    );
     if (res.code === 0) {
       message.success("新增成功");
     } else {
@@ -206,12 +213,20 @@ onMounted(() => {
                   <a-input v-model="element.output" placeholder="输出用例." />
                 </a-form-item>
               </a-space>
-              <a-button
-                status="danger"
-                style="margin-left: 40px"
-                @click="handleDelete(index)"
-                >删除用例
-              </a-button>
+              <a-space direction="vertical" style="margin-left: 40px">
+                <a-button status="danger" @click="handleDelete(index)"
+                  >删除用例
+                </a-button>
+                <a-switch
+                  v-model="element.visible"
+                  :default-checked="true"
+                  @change="
+                    () => {
+                      console.log(element.visible);
+                    }
+                  "
+                />
+              </a-space>
             </div>
           </a-form-item>
           <a-button status="success" @click="handleAdd">新增用例</a-button>

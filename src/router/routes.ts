@@ -1,12 +1,12 @@
 import { RouteRecordRaw } from "vue-router";
 import BaseLayout from "@/layouts/BaseLayout.vue";
-import TemplateView from "@/views/TemplateView.vue";
 import UserLayout from "@/layouts/UserLayout.vue";
 import LoginView from "@/views/user/LoginView.vue";
 import QuestionCreatView from "@/views/question/QuestionCreatView.vue";
 import QuestionManageView from "@/views/question/QuestionManageView.vue";
 import QuestionListView from "@/views/question/QuestionListView.vue";
 import QuestionDetailView from "@/views/question/QuestionDetailView.vue";
+import UserListView from "@/views/admin/UserListView.vue";
 
 // 路由信息（菜单）
 export const routes: Array<RouteRecordRaw> = [
@@ -47,11 +47,11 @@ export const routes: Array<RouteRecordRaw> = [
           hide: true,
         },
       },
-      {
-        path: "/template",
-        name: "测试组件页面",
-        component: TemplateView,
-      },
+      // {
+      //   path: "/template",
+      //   name: "测试组件页面",
+      //   component: TemplateView,
+      // },
       {
         path: "/question/add",
         name: "新增题目",
@@ -75,6 +75,15 @@ export const routes: Array<RouteRecordRaw> = [
         path: "/question/manage",
         name: "题目管理",
         component: QuestionManageView,
+        meta: {
+          requireLogin: true,
+          requireAuth: true,
+        },
+      },
+      {
+        path: "/user/list",
+        name: "用户管理",
+        component: UserListView,
         meta: {
           requireLogin: true,
           requireAuth: true,
