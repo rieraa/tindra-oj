@@ -248,6 +248,29 @@ questionSubmitId: number,
     }
 
     /**
+     * getQuestionSubmitByUserAndQuestion
+     * @param questionId questionId
+     * @returns BaseResponse_QuestionSubmit_ OK
+     * @throws ApiError
+     */
+    public static getQuestionSubmitByUserAndQuestionUsingGet(
+questionId: number,
+): CancelablePromise<BaseResponse_QuestionSubmit_> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/question/question_submit/get/user_question',
+            query: {
+                'questionId': questionId,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
      * listQuestionSubmitByPage
      * @param questionSubmitQueryRequest questionSubmitQueryRequest
      * @returns BaseResponse_Page_QuestionSubmitVO_ OK

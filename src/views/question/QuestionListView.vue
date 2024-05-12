@@ -60,7 +60,7 @@ const handleGetQuestionList = async () => {
     });
     total.value = Number(res.data?.total);
   } else {
-    message.error("获取题目列表失败" + res.message);
+    message.error("获取题目列表失败:" + res.message);
   }
 };
 

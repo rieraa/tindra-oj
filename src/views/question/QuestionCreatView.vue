@@ -2,10 +2,12 @@
 import { onMounted, ref } from "vue";
 import MarkDownEditor from "@/components/MarkDownEditor.vue";
 import message from "@arco-design/web-vue/es/message";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { QuestionControllerService } from "../../../request/question";
 
 const route = useRoute();
+// 返回路由实例
+const router = useRouter();
 // 新增或者更新标志
 const flag = ref("create");
 const form = ref({
@@ -61,7 +63,7 @@ const handleGetQuestion = async () => {
       form.value.tags = JSON.parse(form.value.tags);
     }
   } else {
-    message.error("获取题目失败" + res.message);
+    message.error("获取题目失败:" + res.message);
   }
 };
 
@@ -102,8 +104,11 @@ const doSubmit = async () => {
     );
     if (res.code === 0) {
       message.success("更新成功");
+      router.push({
+        path: "/question/manage",
+      });
     } else {
-      message.error("更新失败" + res.message);
+      message.error("更新失败:" + res.message);
     }
     return;
   } else {
@@ -112,8 +117,11 @@ const doSubmit = async () => {
     );
     if (res.code === 0) {
       message.success("新增成功");
+      router.push({
+        path: "/question/list",
+      });
     } else {
-      message.error("新增失败" + res.message);
+      message.error("新增失败:" + res.message);
     }
   }
 };
@@ -217,15 +225,17 @@ onMounted(() => {
                 <a-button status="danger" @click="handleDelete(index)"
                   >删除用例
                 </a-button>
-                <a-switch
-                  v-model="element.visible"
-                  :default-checked="true"
-                  @change="
-                    () => {
-                      console.log(element.visible);
-                    }
-                  "
-                />
+                <a-space>
+                  <p>用户可见</p>
+                  <a-switch
+                    v-model="element.visible"
+                    :default-checked="true"
+                    @change="
+                      () => {
+                        console.log(element.visible);
+                      }
+                    "
+                /></a-space>
               </a-space>
             </div>
           </a-form-item>

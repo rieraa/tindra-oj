@@ -3,6 +3,7 @@ import { routes } from "@/router/routes";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref, watch } from "vue";
 import { useUserStore } from "@/store/userStore";
+import { IconEdit } from "@arco-design/web-vue/es/icon";
 
 // 用户登录信息全局管理
 const userStore = useUserStore();
@@ -42,11 +43,24 @@ const handleMenuItemClick = (key: string) => {
     path: key,
   });
 };
-
+/**
+ * @description 退出登录
+ */
 const handleLogOut = () => {
   userStore.logOut();
   router.push({
     path: "/user/login",
+  });
+};
+/**
+ *
+ */
+const handleEditInfo = () => {
+  router.push({
+    path: "/user/info",
+    query: {
+      id: userStore.userInfo.id,
+    },
   });
 };
 </script>
@@ -77,9 +91,15 @@ const handleLogOut = () => {
       </a-col>
       <a-col flex="100px">
         <a-popover>
-          <a-avatar :image-url="userStore?.userInfo?.userAvatar ?? ''"
-            >Avatar</a-avatar
+          <a-avatar
+            trigger-type="mask"
+            :image-url="userStore?.userInfo?.userAvatar ?? ''"
+            @click="handleEditInfo"
           >
+            <template #trigger-icon>
+              <IconEdit />
+            </template>
+          </a-avatar>
           <template #content>
             <a-link @click="handleLogOut">退出登录</a-link>
             <!--<a-button>注销</a-button>-->

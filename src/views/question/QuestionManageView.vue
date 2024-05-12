@@ -5,6 +5,7 @@ import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import moment from "moment";
 import { Question, QuestionControllerService } from "../../../request/question";
+import { IconEdit, IconDelete } from "@arco-design/web-vue/es/icon";
 // 返回路由实例
 const router = useRouter();
 // 题目列表
@@ -121,7 +122,7 @@ const handleGetQuestionList = async () => {
 
     total.value = Number(res.data?.total);
   } else {
-    message.error("获取题目列表失败" + res.message);
+    message.error("获取题目列表失败:" + res.message);
   }
 };
 
@@ -136,7 +137,7 @@ const handleDelete = (question: Question) => {
         message.success("删除成功");
         handleGetQuestionList();
       } else {
-        message.error("删除失败" + res.message);
+        message.error("删除失败:" + res.message);
       }
     }
   );
@@ -206,7 +207,7 @@ onMounted(() => {
         <!--  <a-option>JAVA</a-option>-->
         <!--  <a-option>C</a-option>-->
         <!--</a-select>-->
-        <a-input v-model="pageInfo.content" placeholder="输入题目名称" />
+        <a-input v-model="pageInfo.content" placeholder="输入题目内容" />
       </a-form-item>
       <a-form-item field="post" label="题目标签">
         <a-input-tag
@@ -233,15 +234,28 @@ onMounted(() => {
     >
       <template #optional="{ record }">
         <div style="display: flex; gap: 2px">
-          <a-button @click="() => handleUpdate(record)">编辑</a-button>
-          <a-popconfirm content="确认要删除吗？">
-            <a-button @click="() => handleDelete(record)">删除</a-button>
+          <a-button @click="() => handleUpdate(record)" status="warning">
+            <template #icon>
+              <icon-edit />
+            </template>
+            编辑</a-button
+          >
+          <a-popconfirm
+            content="确认要删除吗？"
+            @ok="() => handleDelete(record)"
+          >
+            <a-button status="danger">
+              <template #icon>
+                <icon-delete />
+              </template>
+              删除</a-button
+            >
           </a-popconfirm>
         </div>
       </template>
       <template #tags="{ record }">
         <a-space wrap>
-          <a-tag v-for="tag in record.tags" :key="tag">
+          <a-tag color="cyan" v-for="tag in record.tags" :key="tag">
             {{ tag }}
           </a-tag>
         </a-space>

@@ -7,6 +7,7 @@ import QuestionManageView from "@/views/question/QuestionManageView.vue";
 import QuestionListView from "@/views/question/QuestionListView.vue";
 import QuestionDetailView from "@/views/question/QuestionDetailView.vue";
 import UserListView from "@/views/admin/UserListView.vue";
+import UserInfoView from "@/views/user/UserInfoView.vue";
 
 // 路由信息（菜单）
 export const routes: Array<RouteRecordRaw> = [
@@ -87,6 +88,15 @@ export const routes: Array<RouteRecordRaw> = [
         meta: {
           requireLogin: true,
           requireAuth: true,
+        },
+      },
+      {
+        path: "/user/info",
+        name: "用户信息",
+        component: UserInfoView,
+        meta: {
+          requireLogin: true,
+          hide: true,
         },
       },
     ],

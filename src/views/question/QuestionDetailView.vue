@@ -7,16 +7,33 @@ import MarkDownView from "@/components/MarkDownView.vue";
 import message from "@arco-design/web-vue/es/message";
 import QuestionSubmitList from "@/components/QuestionSubmitList.vue";
 import {
-  Question,
   QuestionControllerService,
   QuestionSubmitRequest,
   QuestionVO,
 } from "../../../request/question";
+import { IconRefresh } from "@arco-design/web-vue/es/icon";
 
 const route = useRoute();
+const CodeEditorIns = ref();
 const questionDetail = ref<QuestionVO>({} as QuestionVO);
-const questionDetailRaw = ref<Question>({} as Question);
-
+const questionDetailRaw = ref({
+  judgeInfo: {
+    outputList: [],
+  },
+});
+const rawCode =
+  "public class Main {\n" +
+  "    public static void main(String[] args) {\n" +
+  "        // 以下为示例代码 根据提示可以从args中获取到参数\n" +
+  "        // 从命令行参数中获取第一个整数\n" +
+  "        int a = Integer.parseInt(args[0]);\n" +
+  "\n" +
+  "        // 从命令行参数中获取第二个整数\n" +
+  "        int b = Integer.parseInt(args[1]);\n" +
+  "        int sum = a + b;\n" +
+  "        System.out.println(sum);\n" +
+  "    }\n" +
+  "}";
 // 用户提交代码表单
 const codeForm = ref<QuestionSubmitRequest>({
   language: "java",
@@ -27,13 +44,15 @@ const codeForm = ref<QuestionSubmitRequest>({
     "        // 以下为示例代码 根据提示可以从args中获取到参数\n" +
     "        // 从命令行参数中获取第一个整数\n" +
     "        int a = Integer.parseInt(args[0]);\n" +
+    "\n" +
     "        // 从命令行参数中获取第二个整数\n" +
-    "       int b = Integer.parseInt(args[1]);\n" +
+    "        int b = Integer.parseInt(args[1]);\n" +
     "        int sum = a + b;\n" +
     "        System.out.println(sum);\n" +
     "    }\n" +
-    "}\n",
+    "}",
 });
+const mode = ref("vs-light");
 
 /**
  * 获取题目详情
@@ -45,7 +64,7 @@ const handleGetQuestionDetail = async () => {
   if (res.code === 0) {
     questionDetail.value = res.data;
   } else {
-    console.error("获取题目详情失败" + res.message);
+    console.error("获取题目详情失败:" + res.message);
   }
 };
 
@@ -55,6 +74,11 @@ const handleGetQuestionDetail = async () => {
  */
 const handleCodeChange = (v: string) => {
   codeForm.value.code = v;
+};
+
+const handleParse = () => {
+  codeForm.value.code = rawCode;
+  CodeEditorIns.value.handleFormat(rawCode);
 };
 
 /**
@@ -68,7 +92,7 @@ const handleRunCode = async () => {
   if (res.code === 0) {
     message.success("提交成功");
   } else {
-    message.error("提交失败" + res.message);
+    message.error("提交失败:" + res.message);
   }
 };
 
@@ -77,16 +101,60 @@ const handleRunCode = async () => {
  * @param key
  */
 const tabsChange = async (key: string) => {
-  const res = await QuestionControllerService.getQuestionByIdUsingGet(
-    route.query.id
-  );
-  console.log(
-    "🚀 ~ file:QuestionDetailView method:tabsChange line:73 -----questionDetailRaw.value:",
-    JSON.parse(res.data?.judgeCase)
-  );
-  questionDetailRaw.value = res.data;
-  questionDetailRaw.value.judgeCase = JSON.parse(res.data?.judgeCase);
+  let res;
+  switch (key) {
+    case "1":
+      break;
+    case "2":
+      res = await QuestionControllerService.getQuestionByIdUsingGet(
+        route.query.id
+      );
+      questionDetailRaw.value = res.data;
+      questionDetailRaw.value.judgeCase = JSON.parse(res.data?.judgeCase);
+      questionDetailRaw.value.judgeInfo = [];
+      console.log(
+        "🚀 ~ file:QuestionDetailView method:tabsChange line:112 -----questionDetailRaw.value:",
+        questionDetailRaw.value
+      );
+      break;
+    case "3":
+      res =
+        await QuestionControllerService.getQuestionSubmitByUserAndQuestionUsingGet(
+          route.query.id
+        );
+      console.log(
+        "🚀 ~ file:QuestionDetailView method:tabsChange line:122 -----res.data?.judgeInfo:",
+        JSON.parse(res.data?.judgeInfo)
+      );
+      res = JSON.parse(res.data?.judgeInfo);
+      res.outputList = eval(res.outputList);
+      console.log(res.outputList);
+      questionDetailRaw.value = {
+        ...questionDetailRaw.value,
+        judgeInfo: res,
+      };
+      if (!questionDetailRaw.value.judgeInfo.outputList) {
+        questionDetailRaw.value.judgeInfo.outputList = new Array(
+          questionDetailRaw.value.judgeCase.length
+        ).fill(questionDetailRaw.value.judgeInfo.message);
+      }
+      questionDetailRaw.value.judgeInfo.outputList =
+        questionDetailRaw.value.judgeInfo.outputList.map((item, index) => {
+          return {
+            ...questionDetailRaw.value.judgeCase[index],
+            actual: item,
+          };
+        });
+
+      console.log(
+        "🚀 ~ file:QuestionDetailView method:tabsChange line:125 -----questionDetailRaw.value:",
+        questionDetailRaw.value
+      );
+      break;
+  }
 };
+
+const questionSubmitList = ref();
 
 onBeforeMount(() => {
   handleGetQuestionDetail();
@@ -130,7 +198,21 @@ onBeforeMount(() => {
           </a-tab-pane>
           <a-tab-pane key="2">
             <template #title> 提交记录</template>
-            <QuestionSubmitList></QuestionSubmitList>
+            <a-button
+              @click="
+                () => {
+                  questionSubmitList.handleGetQuestionList();
+                }
+              "
+              status="normal"
+              style="margin-bottom: 10px"
+            >
+              <template #icon>
+                <icon-refresh />
+              </template>
+              刷新记录</a-button
+            >
+            <QuestionSubmitList ref="questionSubmitList"></QuestionSubmitList>
           </a-tab-pane>
         </a-tabs>
       </a-col>
@@ -145,13 +227,34 @@ onBeforeMount(() => {
                 placeholder="选择编程语言"
               >
                 <a-option>java</a-option>
-                <!--<a-option>javascript</a-option>-->
+                <a-option>javascript</a-option>
                 <!--<a-option>html</a-option>-->
               </a-select>
               <a-button @click="handleRunCode">运行</a-button>
+              <a-button @click="handleParse">格式化</a-button>
+              <!--<a-switch-->
+              <!--  @change="-->
+              <!--    (v) => {-->
+              <!--      console.log(mode);-->
+              <!--    }-->
+              <!--  "-->
+              <!--  unchecked-value="vs-light"-->
+              <!--  checked-value="vs-dark"-->
+              <!--  v-model="mode"-->
+              <!--  checked-color="#1A1A1A"-->
+              <!--  unchecked-color="#14C9C9"-->
+              <!--&gt;-->
+              <!--  <template #checked-icon>-->
+              <!--    <icon-moon />-->
+              <!--  </template>-->
+              <!--  <template #unchecked-icon>-->
+              <!--    <icon-sun />-->
+              <!--  </template>-->
+              <!--</a-switch>-->
             </a-space>
 
             <CodeEditor
+              ref="CodeEditorIns"
               :value="codeForm.code"
               :language="codeForm.language"
               :handle-change="handleCodeChange"
@@ -180,6 +283,19 @@ onBeforeMount(() => {
                   >
                     {{ instance.input }}
                   </div>
+                  <p style="font-size: 11px; color: #8a8a8e">预期输出=</p>
+                  <div
+                    style="
+                      background-color: #f2f3f5;
+                      min-width: 100%;
+                      height: 40px;
+                      border-radius: 8px;
+                      padding: 0 10px;
+                      line-height: 40px;
+                    "
+                  >
+                    {{ instance.output }}
+                  </div>
                 </a-tab-pane>
               </template>
             </a-tabs>
@@ -189,7 +305,8 @@ onBeforeMount(() => {
             <a-tabs size="small" type="rounded">
               <template
                 :key="index"
-                v-for="(instance, index) in questionDetailRaw.judgeCase"
+                v-for="(instance, index) in questionDetailRaw.judgeInfo
+                  .outputList"
               >
                 <a-tab-pane :key="index" v-if="instance.visible">
                   <template #title> {{ "Case" + (index + 1) }}</template>
@@ -208,17 +325,20 @@ onBeforeMount(() => {
                   </div>
                   <p style="font-size: 11px; color: #8a8a8e">实际输出=</p>
                   <div
-                    style="
-                      background-color: #f2f3f5;
-                      min-width: 100%;
-                      height: 40px;
-                      border-radius: 8px;
-                      padding: 0 10px;
-                      line-height: 40px;
-                      /*color: red;*/
-                    "
+                    :style="{
+                      color:
+                        questionDetailRaw.judgeInfo.message == 'ACCEPTED'
+                          ? ''
+                          : '#ff0000',
+                      'min-width': '100%',
+                      height: '40px',
+                      'border-radius': '8px',
+                      padding: '0 10px',
+                      'line-height': '40px',
+                      'background-color': '#f2f3f5',
+                    }"
                   >
-                    8
+                    {{ instance.actual }}
                   </div>
                   <p style="font-size: 11px; color: #8a8a8e">预期输出=</p>
                   <div

@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { BaseResponse } from '../models/BaseResponse';
 import type { BaseResponse_boolean_ } from '../models/BaseResponse_boolean_';
 import type { BaseResponse_LoginUserVO_ } from '../models/BaseResponse_LoginUserVO_';
 import type { BaseResponse_long_ } from '../models/BaseResponse_long_';
@@ -272,6 +273,30 @@ userUpdateMyRequest: UserUpdateMyRequest,
             method: 'POST',
             url: '/api/user/update/my',
             body: userUpdateMyRequest,
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                404: `Not Found`,
+            },
+        });
+    }
+
+    /**
+     * upload
+     * @param file file
+     * @returns BaseResponse OK
+     * @returns any Created
+     * @throws ApiError
+     */
+    public static uploadUsingPost(
+file: Blob,
+): CancelablePromise<BaseResponse | any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/user/upload',
+            formData: {
+                'file': file,
+            },
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,

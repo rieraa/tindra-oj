@@ -2,8 +2,14 @@
 import { onMounted, ref, watch } from "vue";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
-import { UserControllerService } from "../../../request/user";
+import { User, UserControllerService } from "../../../request/user";
 import { Question } from "../../../request/question";
+import {
+  IconUser,
+  IconSun,
+  IconDelete,
+  IconEdit,
+} from "@arco-design/web-vue/es/icon";
 
 // 返回路由实例
 const router = useRouter();
@@ -13,6 +19,8 @@ const userList = ref();
 const searchInfo = ref({
   current: 1,
   pageSize: 9,
+  userAccount: "",
+  userName: "",
 });
 
 // 总数
@@ -37,7 +45,7 @@ const columns = [
   },
   {
     title: "用户角色",
-    dataIndex: "userRole",
+    slotName: "userRole",
   },
   {
     title: "",
@@ -48,7 +56,7 @@ const columns = [
 /**
  * 获取题目列表
  */
-const handleGetQuestionList = async () => {
+const handleGetUserList = async () => {
   const res = await UserControllerService.listUserByPageUsingPost(
     searchInfo.value
   );
@@ -80,32 +88,32 @@ const handlePageChange = (page: number) => {
 };
 
 /**
- * 跳转到用户信息编辑页
- */
-const handleCellClick = (record: Question) => {
-  router.push({
-    path: "/question/detail",
-    query: {
-      id: record.id,
-    },
-  });
-};
-
-/**
  * 删除该用户
  * @param question
  */
-const handleDelete = (question: Question) => {
-  // QuestionControllerService.deleteQuestionUsingPost({ id: question.id }).then(
-  //   (res) => {
-  //     if (res.code === 0) {
-  //       message.success("删除成功");
-  //       handleGetQuestionList();
-  //     } else {
-  //       message.error("删除失败" + res.message);
-  //     }
-  //   }
-  // );
+const handleDelete = async (user: User) => {
+  const res = await UserControllerService.deleteUserUsingPost({
+    id: user.id,
+  });
+  if (res.code === 0) {
+    message.success("删除成功");
+    handleGetUserList();
+  } else {
+    message.error("删除失败:" + res.message);
+  }
+};
+
+/**
+ * 编辑用户
+ * @param user
+ */
+const handleEdit = (user: User) => {
+  router.push({
+    path: "/user/info",
+    query: {
+      id: user.id,
+    },
+  });
 };
 
 /**
@@ -139,13 +147,13 @@ watch(
       searchInfo.value.current = 0;
     }
     // todo 节流
-    handleGetQuestionList();
+    handleGetUserList();
   },
   { deep: true }
 );
 
 onMounted(() => {
-  handleGetQuestionList();
+  handleGetUserList();
 });
 //
 </script>
@@ -153,15 +161,23 @@ onMounted(() => {
 <template>
   <div id="userListView">
     <a-form :model="searchInfo" layout="inline">
-      <a-form-item field="name" label="题目名称">
-        <a-input v-model="searchInfo.title" placeholder="输入题目名称" />
+      <a-form-item field="userAccount" label="登录账号">
+        <a-input v-model="searchInfo.userAccount" placeholder="输入登录账号" />
       </a-form-item>
-      <a-form-item field="post" label="题目标签">
-        <a-input-tag
-          style="width: 300px"
-          v-model="searchInfo.tags"
-          placeholder="请输入标签，按回车添加"
-        />
+      <a-form-item field="userName" label="用户名">
+        <a-input v-model="searchInfo.userName" placeholder="输入用户名" />
+      </a-form-item>
+      <a-form-item>
+        <a-button
+          @click="
+            () => {
+              router.push({
+                path: '/user/info',
+              });
+            }
+          "
+          >新增用户</a-button
+        >
       </a-form-item>
     </a-form>
     <a-divider size="0" />
@@ -178,7 +194,6 @@ onMounted(() => {
           handlePageChange(number);
         }
       "
-      @cell-click="(record) => handleCellClick(record)"
     >
       <template #userAvatar="{ record }">
         <!--用户头像-->
@@ -189,10 +204,39 @@ onMounted(() => {
       <!--相关操作-->
       <template #optional="{ record }">
         <div style="display: flex; gap: 2px">
-          <a-popconfirm content="确认要删除吗？">
-            <a-button @click="() => handleDelete(record)">删除</a-button>
+          <a-button
+            status="warning"
+            @click="
+              () => {
+                handleEdit(record);
+              }
+            "
+          >
+            <template #icon> <icon-edit /> </template>编辑</a-button
+          >
+          <a-popconfirm
+            content="确认要删除吗？"
+            @ok="() => handleDelete(record)"
+          >
+            <a-button status="danger">
+              <template #icon> <icon-delete /> </template>
+              删除
+            </a-button>
           </a-popconfirm>
         </div>
+      </template>
+
+      <template #userRole="{ record }">
+        <a-tag v-if="record.userRole === 'admin'" color="orangered">
+          <template #icon> <icon-sun /> </template>
+          管理员
+        </a-tag>
+        <a-tag v-else color="gold">
+          <template #icon>
+            <icon-user />
+          </template>
+          普通用户
+        </a-tag>
       </template>
     </a-table>
   </div>

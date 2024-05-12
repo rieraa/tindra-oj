@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, defineExpose } from "vue";
 import message from "@arco-design/web-vue/es/message";
-import { useRouter } from "vue-router";
 import { Question, QuestionControllerService } from "../../request/question";
-// 返回路由实例
-const router = useRouter();
+
 // 题目提交列表
 const questionSubmitList = ref();
 // 信息
@@ -97,7 +95,7 @@ const handleGetQuestionList = async () => {
     });
     total.value = Number(res.data?.total);
   } else {
-    message.error("获取题目提交记录列表失败" + res.message);
+    message.error("获取题目提交记录列表失败:" + res.message);
   }
 };
 
@@ -143,6 +141,10 @@ watch(
 
 onMounted(() => {
   handleGetQuestionList();
+});
+
+defineExpose({
+  handleGetQuestionList,
 });
 //
 </script>
